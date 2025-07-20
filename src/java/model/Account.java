@@ -3,12 +3,12 @@ package model;
 public class Account {
     private int id;
     private int customerId;
-    private int account_number;
+    private String accountNumber;
     private double balance;
 
-    public Account(int customerId, int account_number, double balance) {
+    public Account(int customerId, String accountNumber, double balance) {
         this.customerId = customerId;
-        this.account_number = account_number;
+        this.accountNumber = accountNumber;
         this.balance = balance;
     }
 
@@ -20,8 +20,8 @@ public class Account {
         return customerId;
     }
 
-    public int getAccount_number() {
-        return account_number;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public double getBalance() {
