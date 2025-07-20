@@ -76,5 +76,21 @@ public class CustomerService {
 
         ps.setInt(idIndex, oldCustomer.getId());
         ps.executeUpdate();
+
+        ps.close();
+        connection.close();
+    }
+
+    public void deleteCustomer(int customerId) throws SQLException {
+        String sqlQuery = "DELETE FROM customer WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        ps.setInt(1, customerId);
+        ps.executeUpdate();
+
+        ps.close();
+        connection.close();
     }
 }
