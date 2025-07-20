@@ -1,7 +1,6 @@
 package services;
 
 import model.Account;
-import model.Customer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +41,19 @@ public class AccountService {
         connection.close();
 
         return accountWithId;
+    }
+
+    public void deleteAccount(int accountId) throws SQLException {
+        String sqlQuery = "DELETE FROM account WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        ps.setInt(1, accountId);
+        ps.executeUpdate();
+
+        ps.close();
+        connection.close();
     }
 
     public double roundTwoDecimals(double num) {
