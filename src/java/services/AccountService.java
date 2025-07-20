@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AccountService {
-    public Account createAccount(Account account, int customerId) throws SQLException {
+    public Account createAccount(Account account) throws SQLException {
         String sqlQuery = "INSERT INTO account (customer_id, account_number, balance) VALUES (?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();
@@ -26,7 +26,7 @@ public class AccountService {
         if (rs.next()) {
             accountWithId = new Account(
                     rs.getInt(1),
-                    customerId,
+                    account.getCustomerId(),
                     account.getAccountNumber(),
                     account.getBalance()
             );
