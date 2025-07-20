@@ -4,9 +4,9 @@ public class Customer {
     private int id;
     private String name;
     private String email;
-    private int phoneNumber;
+    private String phoneNumber;
 
-    public Customer(String name, String email, int phoneNumber) {
+    public Customer(String name, String email, String phoneNumber) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -24,7 +24,11 @@ public class Customer {
         return email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
