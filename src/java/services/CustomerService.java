@@ -43,4 +43,38 @@ public class CustomerService {
 
         return customerWithId;
     }
+
+    public void updateCustomer(Customer oldCustomer, Map<String, String> updates) throws SQLException {
+        if (updates.isEmpty()) return;
+
+        String sqlQuery = "UPDATE customer SET ";
+        int updateCount = 0;
+
+        for (String key: updates.keySet()) {
+            sqlQuery += key + " = ?";
+            updateCount++;
+
+            if (updateCount < updates.size()) sqlQuery += ", ";
+        }
+
+        sqlQuery += " WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        int idIndex = 1;
+
+        for (String key: updates.keySet()) {
+            String value = updates.get(key);
+
+            ps.setObject(idIndex++, value);
+
+            if (key.equals("name")) oldCustomer.setName(value);
+            if (key.equals("email")) oldCustomer.setEmail(value);
+            if (key.equals("phoneNumber")) oldCustomer.setPhoneNumber(value);
+        }
+
+        ps.setInt(idIndex, oldCustomer.getId());
+        ps.executeUpdate();
+    }
 }
