@@ -10,12 +10,25 @@ public class Transaction {
     private LocalDateTime date;
     private String details;
 
-    public Transaction(int accountId, String type, double amount, LocalDateTime date, String details) {
+    public Transaction(int accountId, String type, double amount, String details) {
         this.accountId = accountId;
         this.type = type;
         this.amount = amount;
-        this.date = date;
+        this.date = LocalDateTime.now();
         this.details = details;
+    }
+
+    public Transaction(int id, int accountId, String type, double amount, String details) {
+        this.id = id;
+        this.accountId = accountId;
+        this.type = type;
+        this.amount = amount;
+        this.date = LocalDateTime.now();
+        this.details = details;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getAccountId() {
