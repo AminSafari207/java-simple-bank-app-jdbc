@@ -3,6 +3,7 @@ package services;
 import model.Account;
 import model.DepositParams;
 import model.Transaction;
+import model.WithdrawParams;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -117,6 +118,72 @@ public class AccountService {
         for (DepositParams params : paramsBatch) {
             if (params != null) {
                 params.getAccount().increaseBalance(roundTwoDecimals(params.getAmount()));
+            }
+        }
+
+        TransactionService.createTransaction(transactions);
+
+        ps.close();
+        connection.close();
+    }
+
+    public void withdraw(WithdrawParams params, boolean skipTransaction) throws SQLException {
+        if (params == null) return;
+
+        String sqlQuery = "UPDATE account SET balance = balance - ? WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        int accountId = params.getAccount().getId();
+        double amount = roundTwoDecimals(params.getAmount());
+
+        ps.setDouble(1, amount);
+        ps.setInt(2, accountId);
+        ps.executeUpdate();
+
+        params.getAccount().decreaseBalance(amount); // subtract
+
+        if (!skipTransaction) {
+            Transaction transaction = new Transaction(accountId, "withdraw", amount, params.getDetails());
+            TransactionService.createTransaction(transaction);
+        }
+
+        ps.close();
+        connection.close();
+    }
+
+    public void withdraw(WithdrawParams[] paramsBatch) throws SQLException {
+        if (paramsBatch == null || paramsBatch.length == 0) return;
+
+        String sqlQuery = "UPDATE account SET balance = balance - ? WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        connection.setAutoCommit(false);
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        for (WithdrawParams params : paramsBatch) {
+            if (params == null) continue;
+
+            int accountId = params.getAccount().getId();
+            double amount = roundTwoDecimals(params.getAmount());
+
+            ps.setDouble(1, amount);
+            ps.setInt(2, accountId);
+            ps.addBatch();
+
+            transactions.add(new Transaction(accountId, "withdraw", amount, params.getDetails()));
+        }
+
+        ps.executeBatch();
+        connection.commit();
+
+        for (WithdrawParams params : paramsBatch) {
+            if (params != null) {
+                params.getAccount().increaseBalance(-roundTwoDecimals(params.getAmount()));
             }
         }
 
