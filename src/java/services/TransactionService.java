@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class TransactionService {
-    public void createTransaction(Transaction transaction) throws SQLException {
+    public static void createTransaction(Transaction transaction) throws SQLException {
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();
@@ -25,7 +25,7 @@ public class TransactionService {
         connection.close();
     }
 
-    public void createTransaction(Transaction[] transactions) throws SQLException {
+    public static void createTransaction(Transaction[] transactions) throws SQLException {
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();

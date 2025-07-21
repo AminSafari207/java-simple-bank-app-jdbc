@@ -2,6 +2,7 @@ package services;
 
 import model.Account;
 import model.DepositParams;
+import model.Transaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -63,12 +64,17 @@ public class AccountService {
         Connection connection = DBConnection.getConnection();
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
 
+        int accountId = params.getAccount().getId();
+
         ps.setDouble(1, roundTwoDecimals(params.getAmount()));
-        ps.setInt(2, params.getAccount().getId());
+        ps.setInt(2, accountId);
         ps.executeUpdate();
 
         ps.close();
         connection.close();
+
+        Transaction transaction = new Transaction(accountId, "deposit", params.getAmount(), params.getDetails());
+        TransactionService.createTransaction(transaction);
     }
 
     public double roundTwoDecimals(double num) {
