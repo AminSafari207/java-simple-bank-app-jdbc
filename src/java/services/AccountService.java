@@ -64,7 +64,7 @@ public class AccountService {
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
 
         ps.setDouble(1, roundTwoDecimals(params.getAmount()));
-        ps.setInt(2, params.getAccountId());
+        ps.setInt(2, params.getAccount().getId());
         ps.executeUpdate();
 
         ps.close();
