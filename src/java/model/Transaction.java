@@ -18,15 +18,6 @@ public class Transaction {
         this.details = details;
     }
 
-    public Transaction(int id, int accountId, String type, double amount, String details) {
-        this.id = id;
-        this.accountId = accountId;
-        this.type = type;
-        this.amount = amount;
-        this.date = LocalDateTime.now();
-        this.details = details;
-    }
-
     public int getId() {
         return id;
     }

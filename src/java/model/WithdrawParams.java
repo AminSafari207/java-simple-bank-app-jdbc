@@ -8,7 +8,7 @@ public class WithdrawParams {
     public WithdrawParams(Account account, double amount, String details) {
         this.account = account;
         this.amount = amount;
-        this.details = details;
+        this.details = details == null ? "" : details;
     }
 
     public Account getAccount() {
