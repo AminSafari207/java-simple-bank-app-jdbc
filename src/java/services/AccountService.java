@@ -1,6 +1,7 @@
 package services;
 
 import model.Account;
+import model.DepositParams;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,6 +51,20 @@ public class AccountService {
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
 
         ps.setInt(1, accountId);
+        ps.executeUpdate();
+
+        ps.close();
+        connection.close();
+    }
+
+    public void deposit(DepositParams params) throws SQLException {
+        String sqlQuery = "UPDATE account SET balance = balance + ? WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        ps.setDouble(1, roundTwoDecimals(params.getAmount()));
+        ps.setInt(2, params.getAccountId());
         ps.executeUpdate();
 
         ps.close();
