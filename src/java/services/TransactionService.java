@@ -9,6 +9,8 @@ import java.sql.Timestamp;
 
 public class TransactionService {
     public static void createTransaction(Transaction transaction) throws SQLException {
+        if (transaction == null) return;
+
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();
@@ -26,6 +28,8 @@ public class TransactionService {
     }
 
     public static void createTransaction(Transaction[] transactions) throws SQLException {
+        if (transactions == null || transactions.length == 0) return;
+
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();

@@ -58,7 +58,9 @@ public class AccountService {
         connection.close();
     }
 
-    public void deposit(DepositParams params) throws SQLException {
+    public void deposit(DepositParams params, boolean skipTransaction) throws SQLException {
+        if (params == null) return;
+
         String sqlQuery = "UPDATE account SET balance = balance + ? WHERE id = ?";
 
         Connection connection = DBConnection.getConnection();
@@ -73,8 +75,10 @@ public class AccountService {
 
         params.getAccount().increaseBalance(amount);
 
-        Transaction transaction = new Transaction(accountId, "deposit", params.getAmount(), params.getDetails());
-        TransactionService.createTransaction(transaction);
+        if (!skipTransaction) {
+            Transaction transaction = new Transaction(accountId, "deposit", params.getAmount(), params.getDetails());
+            TransactionService.createTransaction(transaction);
+        }
 
         ps.close();
         connection.close();
