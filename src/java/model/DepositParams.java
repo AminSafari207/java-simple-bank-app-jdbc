@@ -1,18 +1,18 @@
 package model;
 
 public class DepositParams {
-    private int accountId;
+    private Account account;
     private double amount;
     private String details;
 
-    public DepositParams(int accountId, double amount, String details) {
-        this.accountId = accountId;
+    public DepositParams(Account account, double amount, String details) {
+        this.account = account;
         this.amount = amount;
         this.details = details;
     }
 
-    public int getAccountId() {
-        return accountId;
+    public Account getAccount() {
+        return account;
     }
 
     public double getAmount() {

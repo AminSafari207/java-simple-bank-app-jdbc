@@ -34,4 +34,12 @@ public class Account {
     public double getBalance() {
         return balance;
     }
+
+    public void increaseBalance(double amount) {
+        this.balance += amount;
+    }
+
+    public void decreaseBalance(double amount) {
+        this.balance -= amount;
+    }
 }
