@@ -1,9 +1,6 @@
 package services.jdbc;
 
-import model.Account;
-import model.DepositParams;
-import model.Transaction;
-import model.WithdrawParams;
+import model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -192,6 +189,33 @@ public class AccountService {
         ps.close();
         connection.close();
     }
+
+    public void transfer(TransferParams params) throws SQLException {
+        if (params == null) return;
+
+        Account fromAccount = params.getFromAccount();
+        Account toAccount = params.getToAccount();
+        double amount = roundTwoDecimals(params.getAmount());
+
+        withdraw(new WithdrawParams(fromAccount, amount, null), true);
+        deposit(new DepositParams(toAccount, amount, null), true);
+
+        List<Transaction> transactions = List.of(
+                new Transaction(
+                        fromAccount.getId(),
+                        "transfer", amount,
+                        "Transfer from account number: " + fromAccount.getAccountNumber()
+                ),
+                new Transaction(toAccount.getId(),
+                        "transfer",
+                        amount,
+                        "Transfer to account number: " + toAccount.getAccountNumber()
+                )
+        );
+
+        TransactionService.createTransaction(transactions);
+    }
+
 
     public double roundTwoDecimals(double num) {
         return Math.round(num * 100.0) / 100.0;
