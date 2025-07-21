@@ -203,13 +203,15 @@ public class AccountService {
         List<Transaction> transactions = List.of(
                 new Transaction(
                         fromAccount.getId(),
-                        "transfer", amount,
-                        "Transfer from account number: " + fromAccount.getAccountNumber()
-                ),
-                new Transaction(toAccount.getId(),
                         "transfer",
                         amount,
-                        "Transfer to account number: " + toAccount.getAccountNumber()
+                        "Transfer to account number: " + fromAccount.getAccountNumber()
+                ),
+                new Transaction(
+                        toAccount.getId(),
+                        "transfer",
+                        amount,
+                        "Transfer from account number: " + toAccount.getAccountNumber()
                 )
         );
 
