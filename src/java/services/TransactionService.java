@@ -29,7 +29,7 @@ public class TransactionService {
     }
 
     public static void createTransaction(List<Transaction> transactions) throws SQLException {
-        if (transactions == null || transactions.length == 0) return;
+        if (transactions == null || transactions.isEmpty()) return;
 
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
 
