@@ -65,16 +65,19 @@ public class AccountService {
         PreparedStatement ps = connection.prepareStatement(sqlQuery);
 
         int accountId = params.getAccount().getId();
+        double amount = roundTwoDecimals(params.getAmount());
 
-        ps.setDouble(1, roundTwoDecimals(params.getAmount()));
+        ps.setDouble(1, amount);
         ps.setInt(2, accountId);
         ps.executeUpdate();
 
-        ps.close();
-        connection.close();
+        params.getAccount().increaseBalance(amount);
 
         Transaction transaction = new Transaction(accountId, "deposit", params.getAmount(), params.getDetails());
         TransactionService.createTransaction(transaction);
+
+        ps.close();
+        connection.close();
     }
 
     public double roundTwoDecimals(double num) {
