@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountService {
     public Account createAccount(Account account) throws SQLException {
@@ -79,6 +81,46 @@ public class AccountService {
             Transaction transaction = new Transaction(accountId, "deposit", params.getAmount(), params.getDetails());
             TransactionService.createTransaction(transaction);
         }
+
+        ps.close();
+        connection.close();
+    }
+
+    public void deposit(DepositParams[] paramsBatch) throws SQLException {
+        if (paramsBatch == null || paramsBatch.length == 0) return;
+
+        String sqlQuery = "UPDATE account SET balance = balance + ? WHERE id = ?";
+
+        Connection connection = DBConnection.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+        connection.setAutoCommit(false);
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        for (DepositParams params: paramsBatch) {
+            if (params == null) continue;
+
+            int accountId = params.getAccount().getId();
+            double amount = roundTwoDecimals(params.getAmount());
+
+            ps.setDouble(1, amount);
+            ps.setInt(2, accountId);
+            ps.addBatch();
+
+            transactions.add(new Transaction(accountId, "deposit", amount, params.getDetails()));
+        }
+
+        ps.executeBatch();
+        connection.commit();
+
+        for (DepositParams params : paramsBatch) {
+            if (params != null) {
+                params.getAccount().increaseBalance(roundTwoDecimals(params.getAmount()));
+            }
+        }
+
+        TransactionService.createTransaction(transactions);
 
         ps.close();
         connection.close();
