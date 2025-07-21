@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class TransactionService {
     public static void createTransaction(Transaction transaction) throws SQLException {
@@ -27,7 +28,7 @@ public class TransactionService {
         connection.close();
     }
 
-    public static void createTransaction(Transaction[] transactions) throws SQLException {
+    public static void createTransaction(List<Transaction> transactions) throws SQLException {
         if (transactions == null || transactions.length == 0) return;
 
         String sqlQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
