@@ -269,6 +269,14 @@ public class AccountService {
         transactionPs.executeBatch();
         connection.commit();
 
+        for (TransferParams params : paramsBatch) {
+            if (params != null) {
+                double amount = roundTwoDecimals(params.getAmount());
+                params.getFromAccount().decreaseBalance(amount);
+                params.getToAccount().increaseBalance(amount);
+            }
+        }
+
         withdrawPs.close();
         depositPs.close();
         transactionPs.close();
