@@ -12,7 +12,7 @@ public class AccountService {
         String sqlQuery = "INSERT INTO account (customer_id, account_number, balance) VALUES (?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();
-        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        PreparedStatement ps = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
         ps.setInt(1, account.getCustomerId());
         ps.setString(2, account.getAccountNumber());
@@ -238,8 +238,8 @@ public class AccountService {
             double amount = roundTwoDecimals(params.getAmount());
             Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
             String transactionType = "transfer";
-            String fromDetails = "Transfer to account number: " + fromAccount.getAccountNumber();
-            String toDetails = "Transfer from account number: " + toAccount.getAccountNumber();
+            String fromDetails = "Transfer to account number: " + toAccount.getAccountNumber();
+            String toDetails = "Transfer from account number: " + fromAccount.getAccountNumber();
 
             withdrawPs.setDouble(1, amount);
             withdrawPs.setInt(2, fromAccount.getId());

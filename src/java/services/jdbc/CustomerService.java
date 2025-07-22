@@ -2,10 +2,7 @@ package services.jdbc;
 
 import model.Customer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Map;
 
 public class CustomerService {
@@ -13,7 +10,7 @@ public class CustomerService {
         String sqlQuery = "INSERT INTO customer (name, email, phone) VALUES (?, ?, ?)";
 
         Connection connection = DBConnection.getConnection();
-        PreparedStatement ps = connection.prepareStatement(sqlQuery);
+        PreparedStatement ps = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
         ps.setString(1, customer.getName());
         ps.setString(2, customer.getEmail());
