@@ -82,8 +82,8 @@ public class AccountService {
         connection.close();
     }
 
-    public void deposit(DepositParams[] paramsBatch) throws SQLException {
-        if (paramsBatch == null || paramsBatch.length == 0) return;
+    public void deposit(List<DepositParams> paramsBatch) throws SQLException {
+        if (paramsBatch == null || paramsBatch.isEmpty()) return;
 
         String sqlQuery = "UPDATE account SET balance = balance + ? WHERE id = ?";
 
@@ -148,8 +148,8 @@ public class AccountService {
         connection.close();
     }
 
-    public void withdraw(WithdrawParams[] paramsBatch) throws SQLException {
-        if (paramsBatch == null || paramsBatch.length == 0) return;
+    public void withdraw(List<WithdrawParams> paramsBatch) throws SQLException {
+        if (paramsBatch == null || paramsBatch.isEmpty()) return;
 
         String sqlQuery = "UPDATE account SET balance = balance - ? WHERE id = ?";
 
