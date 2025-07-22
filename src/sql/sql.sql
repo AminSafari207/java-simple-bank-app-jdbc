@@ -6,13 +6,13 @@ create table customer(
     id serial primary key,
     name varchar,
     email varchar,
-    phone int
+    phone varchar
 );
 
 create table account(
   id serial primary key,
   customer_id int references customer(id),
-  account_number int,
+  account_number varchar,
   balance decimal
 );
 
