@@ -2,10 +2,8 @@ package services.jdbc;
 
 import model.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -218,6 +216,64 @@ public class AccountService {
         TransactionService.createTransaction(transactions);
     }
 
+    public void transfer(List<TransferParams> paramsBatch) throws SQLException {
+        if (paramsBatch == null || paramsBatch.isEmpty()) return;
+
+        Connection connection = DBConnection.getConnection();
+        connection.setAutoCommit(false);
+
+        String withdrawQuery = "UPDATE account SET balance = balance + ? WHERE id = ?";
+        String depositQuery = "UPDATE account SET balance = balance - ? WHERE id = ?";
+        String transactionQuery = "INSERT INTO transaction (account_id, type, amount, date, details) VALUES (?, ?, ?, ?, ?)";
+
+        PreparedStatement withdrawPs = connection.prepareStatement(withdrawQuery);
+        PreparedStatement depositPs = connection.prepareStatement(depositQuery);
+        PreparedStatement transactionPs = connection.prepareStatement(transactionQuery);
+
+        for (TransferParams params: paramsBatch) {
+            if (params == null) continue;
+
+            Account fromAccount = params.getFromAccount();
+            Account toAccount = params.getToAccount();
+            double amount = roundTwoDecimals(params.getAmount());
+            Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+            String transactionType = "transfer";
+            String fromDetails = "Transfer to account number: " + fromAccount.getAccountNumber();
+            String toDetails = "Transfer from account number: " + toAccount.getAccountNumber();
+
+            withdrawPs.setDouble(1, amount);
+            withdrawPs.setInt(2, fromAccount.getId());
+            withdrawPs.addBatch();
+
+            depositPs.setDouble(1, amount);
+            depositPs.setInt(2, toAccount.getId());
+            depositPs.addBatch();
+
+            transactionPs.setInt(1, fromAccount.getId());
+            transactionPs.setString(2, transactionType);
+            transactionPs.setDouble(3, amount);
+            transactionPs.setTimestamp(4, timestamp);
+            transactionPs.setString(5, fromDetails);
+            transactionPs.addBatch();
+
+            transactionPs.setInt(1, toAccount.getId());
+            transactionPs.setString(2, transactionType);
+            transactionPs.setDouble(3, amount);
+            transactionPs.setTimestamp(4, timestamp);
+            transactionPs.setString(5, toDetails);
+            transactionPs.addBatch();
+        }
+
+        withdrawPs.executeBatch();
+        depositPs.executeBatch();
+        transactionPs.executeBatch();
+        connection.commit();
+
+        withdrawPs.close();
+        depositPs.close();
+        transactionPs.close();
+        connection.close();
+    }
 
     public double roundTwoDecimals(double num) {
         return Math.round(num * 100.0) / 100.0;
